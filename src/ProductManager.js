@@ -2,9 +2,9 @@
 const fs = require('fs')
 
 class ProductManager {
-  constructor(path) {
+  constructor() {
       this.products = []
-      this.path = path
+      this.path = "./productos.json"
   }
 
   async addProduct(title,description,price,thumbnail,code,stock) {
@@ -113,26 +113,3 @@ let newId = this.products.length === 0 ? 1 : this.products[this.products.length 
 }
 
 module.exports = ProductManager;
-
-// const instancia = new ProductManager('./productos.json');
-
-// const llamadaAsincrónica =  async () => {
-//   await instancia.addProduct('Producto 1', 'Descripción 1', 1000, 'imagen.jpg', '1234AB', 10);
-//   await instancia.addProduct('Producto 2', 'Descripción 2', 2000, 'imagen.jpg', '1234AA', 10);
-//   await instancia.addProduct('Producto 3', 'Descripción 3', 3000, 'imagen.jpg', '1234AC', 10);
-//   await instancia.addProduct('Producto 4', 'Descripción 4', 4000, 'imagen.jpg', '1234AD', 10);
-
-//   const products = await instancia.getProducts();
-//   console.log('Productos:', products);
-
-//   const product = await instancia.getProductById(2);
-//   console.log('Producto por ID:', product);
-
-//   await instancia.updateProduct(1, { title: 'Nuevo Producto 1', price: 2000 });
-//   await instancia.deleteProduct(2);
-
-//   const updatedProducts = await instancia.getProducts();
-//   console.log('Productos actualizados:', updatedProducts);
-// }
-
-// llamadaAsincrónica();
