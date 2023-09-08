@@ -1,8 +1,8 @@
 <h1 class="title">Productos</h1>
 <div class="container">
 
-  {{#each listaProductos}}
-    <div class="card" id={{this.id}}>
+  {{#each products}}
+    <div class="card" id={{this._id}}>
       <div class="card-body">
         <img class="card-img" src={{this.thumbnail}} alt={{this.title}} />
         <h5 class="card-title">{{this.title}}</h5>

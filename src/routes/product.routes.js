@@ -1,19 +1,16 @@
 
-const express = require("express");
-const ProductManager = require("../ProductManager")
-const manager = new ProductManager();
-const router = express.Router();
+import { Router } from "express";
+import ProductsManager from "../dao/mongo/managers/ProductsManager.js";
+
+const router = Router()
+const productsService = new ProductsManager()
 
 //endpoint "/products"
 router.get("/", async (req, res) => {
     try {
-      let prods = await manager.getProducts()
-      if (req.query.limit) {
-        let limiteds = prods.slice(0, req.query.limit);
-        res.send(limiteds);
-      } else {
-        res.send(prods);
-      }
+    const {page = 1,limit = 10} = req.query
+    const products = await productsService.getProducts(page,limit)
+    res.send({status: "success", payload: products})
     } catch (error) {
       res.json({ error: error });
     }
@@ -21,10 +18,10 @@ router.get("/", async (req, res) => {
   
   //endpoint product by id
   router.get("/:pid", async (req, res) => {
-    let {pid} = req.params;
     try {
-      let product = await manager.getProductById(pid);
-      res.json(product);
+      const {pid} = req.params;
+      const product = await productsService.getProductsBy(pid)
+      res.json({status: "success", payload: product});
     } catch (error) {
       res.json({ error: error });
     }
@@ -42,7 +39,11 @@ router.get("/", async (req, res) => {
         category,
         thumbnail,
       } = req.body;
-      const product = await manager.addProduct(
+
+      if (!title || !description || !code || !price || !stock || !category) {
+        res.status(400).send({status: "error", message: "Incomplete values" })
+      }
+      const newProduct = {
         title,
         description,
         code,
@@ -50,34 +51,57 @@ router.get("/", async (req, res) => {
         status,
         stock,
         category,
-        thumbnail
-      );
-      res.send(product);
+        thumbnail,
+      }
+      
+      const result = await productsService.createProduct(newProduct)
+      res.send({status: "success", payload: result._id});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   });
   
-  router.put("/:pid", async (req, res) => {
+  router.put('/:pid', async (req,res) => {
     try {
-      let productId = req.params.pid;
-      let result = await manager.updateProduct(productId, req.body);
-      res.status(201).json(result);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
-    }
-  });
-  
-  router.delete("/:pid", async (req, res) => {
-    try {
-      let productId = req.params.pid;
-      let result = await productManager.deleteProduct(productId);
-      res.json({ success: result });
-    } catch (error) {
-      res.json({ error: error.message });
-    }
-  });
+      const id = req.params.pid
+      const {
+        title,
+        description,
+        code,
+        price,
+        status,
+        stock,
+        category,    
+      } = req.body;
 
-  module.exports = router;
+      const updateProduct = {
+        title,
+        description,
+        code,
+        price,
+        status,
+        stock,
+        category,   
+      }
+
+      const product = await productsService.getProductsBy({_id: id})
+      if (!product) return res.status(404).send({status: "error", error: "Videojuego no existe"})
+      const result = await productsService.updateProduct(id, updateProduct)
+      res.send({status: "success", message: "Product updated" })
+      } catch (error) {
+      res.json({ error: error.message });     
+      }
+})
   
+  router.delete("/:pid",async (req,res) => {
+    try {
+      const id = req.params.pid
+      const result = await productsService.deleteProduct(id)
+      res.send({status: "success", message: "Product deleted"})
+    } catch (error) {
+      res.json({ error: error.message });     
+    }
+})
+
   
+  export default router

@@ -1,8 +1,8 @@
+import { Router } from "express";
+import CartsManager from "../dao/mongo/managers/CartsManager.js"
 
-const express = require("express");
-const CartManager = require("../CartManager");
-const cartsRouter = new CartManager();
-const router = express.Router();
+const router = Router()
+const cartsService = new CartsManager()
 
 router.post("/", async (req, res) => {
   try {
@@ -34,4 +34,4 @@ router.post("/:cid/product/:pid", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router

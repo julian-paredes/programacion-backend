@@ -1,18 +1,30 @@
+import { Router } from "express";
+import ProductsManager from "../dao/mongo/managers/ProductsManager.js";
 
-const express = require("express");
-const ProductManager = require("../ProductManager")
-const router = express.Router();
-
-const manager = new ProductManager(__dirname + "/files/products.json");
+const router = Router()
+const productsService = new ProductsManager()
 
 router.get("/", async (req, res) => {
-  const listaProductos = await manager.getProducts();
-  res.render("home", { listaProductos });
+  try {
+    const {page = 1,limit = 10} = req.query
+    const paginationResult = await productsService.getProducts(page,limit)
+  
+    const products = paginationResult.docs;
+    const currentPage = paginationResult.page;
+    const {hasPrevPage, hasNextPage, prevPage, nextPage} = paginationResult;
+    
+    res.render("home",
+     { 
+      products,
+      page:currentPage,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage
+  });  
+  } catch (error) {
+    res.json({ error: error });
+  }
 });
 
-router.get("/realTimeProducts", async (req, res) => {
-  const listaProductos = await manager.getProducts();
-  res.render("realTimeProducts", { listaProductos });
-});
-
-module.exports = router;
+export default router
