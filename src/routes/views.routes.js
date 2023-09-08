@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     res.render("home",
      { 
       products,
-      page:currentPage,
+      page: currentPage,
       hasPrevPage,
       hasNextPage,
       prevPage,
