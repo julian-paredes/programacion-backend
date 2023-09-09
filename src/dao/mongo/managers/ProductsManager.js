@@ -6,8 +6,8 @@ export default class ProductsManager {
         return productsModel.paginate({},{page,limit,lean:true})
     }
 
-    getProductsBy = (params) => {
-        return productsModel.findOne(params).lean()
+    getProductsById = (pid) => {
+        return productsModel.findOne({_id: pid}).lean()
     }
 
     createProduct = (product) => {

@@ -9,8 +9,29 @@ const productsService = new ProductsManager()
 router.get("/", async (req, res) => {
     try {
     const {page = 1,limit = 10} = req.query
-    const products = await productsService.getProducts(page,limit)
-    res.send({status: "success", payload: products})
+    const paginationResult = await productsService.getProducts(page,limit)
+
+    const products = paginationResult.docs;
+    const currentPage = paginationResult.page;
+    const {hasPrevPage, hasNextPage, prevPage, nextPage,totalDocs,totalPages} = paginationResult;
+
+    const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT || 8080}${req.baseUrl}`
+    const prevLink = hasPrevPage ? `${baseUrl}?page=${prevPage}&limit=${limit}` : null
+    const nextLink = hasNextPage ? `${baseUrl}?page=${nextPage}&limit=${limit}` : null
+
+    const paginationData = {
+      currentPage,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+      totalDocs,
+      totalPages,
+      prevLink,
+      nextLink
+    }
+
+    res.send({status: "success", payload: products, ...paginationData})
     } catch (error) {
       res.json({ error: error });
     }
@@ -20,7 +41,7 @@ router.get("/", async (req, res) => {
   router.get("/:pid", async (req, res) => {
     try {
       const {pid} = req.params;
-      const product = await productsService.getProductsBy(pid)
+      const product = await productsService.getProductsById(pid)
       res.json({status: "success", payload: product});
     } catch (error) {
       res.json({ error: error });
@@ -84,7 +105,7 @@ router.get("/", async (req, res) => {
         category,   
       }
 
-      const product = await productsService.getProductsBy({_id: id})
+      const product = await productsService.getProductsById({_id: id})
       if (!product) return res.status(404).send({status: "error", error: "Videojuego no existe"})
       const result = await productsService.updateProduct(id, updateProduct)
       res.send({status: "success", message: "Product updated" })
