@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import productsRouter from "./routes/product.routes.js"
 import viewRouter from "./routes/views.routes.js"
 import cartsRouter from "./routes/cart.routes.js"
+import sessionsRouter from "./routes/sessions.routes.js"
 import __dirname from "./utils.js"
 import Handlebars from "express-handlebars"
 
@@ -23,3 +24,4 @@ app.use(express.urlencoded({extended:true}))
 app.use('/', viewRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+app.use('/api/sessions', sessionsRouter)

@@ -27,4 +27,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get('/profile', async (req,res) => {
+  try {
+    res.render('profile', {})
+  } catch (error) {
+    res.json({ error: error });
+  }
+})
+
+router.get('/register', async (req,res) => {
+  
+  try {
+    res.render('register', {})
+  } catch (error) {
+    res.json({ error: error });
+  }
+})
+
+router.get('/login', async (req,res) => {
+
+  try {
+    res.render('login',{})
+  } catch (error) {
+    res.json({ error: error });
+  }
+})
+
 export default router
