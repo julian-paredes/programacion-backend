@@ -31,9 +31,37 @@ router.post('/register', async(req,res) => {
 
 
 router.post('/login', async(req,res) => {
-    console.log(req.body);
+    const {email,password} = req.body
+    if(!email || !password) return res.status(400).send({status: "error", message: "Complete todos los datos"})
+
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
+        const adminUser = {
+            firstName: "Admin",
+            lastName: "Admin",
+            email: "adminCoder@coder.com",
+            role: "admin"
+        }
+        req.session.user = adminUser
+        res.send({status: 'success', message: 'Usuario logueado'})
+        return
+    }
+
+    const user = await usersService.getUserById({email,password})
+    if (!user) return res.status(400).send({status: "error", message: "Credenciales incorrectas"})
     
+    req.session.user = user
     res.send({status: 'success', message: 'Usuario logueado'})
+})
+
+router.get('/logout', async (req,res) => {
+    req.session.destroy(error => {
+        if (error){
+            console.log("Error:", error);
+            return res.redirect('/login')
+        } else {
+            return res.redirect('/login')
+        }
+    })
 })
 
 export default router

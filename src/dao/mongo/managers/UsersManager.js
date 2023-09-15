@@ -6,8 +6,8 @@ export default class UsersManager {
         return usersModel.find().lean()
     }
 
-    getUserById = (id) => {
-        return usersModel.findOne(id).lean()
+    getUserById = (params) => {
+        return usersModel.findOne(params).lean()
     }
 
     createUser = (user) => {

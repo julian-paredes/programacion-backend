@@ -1,6 +1,13 @@
 <h1 class="title">Productos</h1>
+<div class="userInfo">
+  <p>Bienvenido {{user.firstName}}!</p>
+  {{#if isUserRole}}
+  <p>Tu email es {{user.email}}</p>    
+  {{/if}}
+  <br>
+  <a href="/api/sessions/logout"><button>Cerrar sesión</button></a>
+</div>
 <div class="container">
-
   {{#each products}}
     <div class="card" id={{this._id}}>
       <div class="card-body">
@@ -29,3 +36,4 @@
     <a href="/?page={{nextPage}}"><button>Siguiente</button></a>
   {{/if}}
 </div>
+

@@ -12,9 +12,19 @@ router.get("/", async (req, res) => {
     const products = paginationResult.docs;
     const currentPage = paginationResult.page;
     const {hasPrevPage, hasNextPage, prevPage, nextPage} = paginationResult;
+    const {user} = req.session
+
+    let isUserRole = null
+
+    if (user.role === "user") {
+      isUserRole = true 
+    }
+ 
     
     res.render("home",
-     { 
+     {
+      user, 
+      isUserRole,
       products,
       page: currentPage,
       hasPrevPage,
@@ -29,7 +39,10 @@ router.get("/", async (req, res) => {
 
 router.get('/profile', async (req,res) => {
   try {
-    res.render('profile', {})
+    if (!req.session.user) {
+      return res.redirect('/login')
+    }
+    res.render('profile', {user: req.session.user})
   } catch (error) {
     res.json({ error: error });
   }

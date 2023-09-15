@@ -123,4 +123,16 @@
   .pagination button:hover {
     background-color: #0056b3;
   }
+
+  .userInfo {
+    text-align: center;
+  }
+
+  #loginForm {
+    text-align: center;
+  }
+
+  #registerForm {
+    text-align: center;
+  }
   
