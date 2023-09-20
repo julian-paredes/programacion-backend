@@ -1,13 +1,17 @@
 import express from "express"
 import mongoose from "mongoose";
+import Handlebars from "express-handlebars"
+import session from "express-session";
+import MongoStore from 'connect-mongo'
+import passport from "passport";
+
 import productsRouter from "./routes/product.routes.js"
 import viewRouter from "./routes/views.routes.js"
 import cartsRouter from "./routes/cart.routes.js"
 import sessionsRouter from "./routes/sessions.routes.js"
 import __dirname from "./utils.js"
-import Handlebars from "express-handlebars"
-import session from "express-session";
-import MongoStore from 'connect-mongo'
+import initializeStrategies from "./config/passport.config.js";
+
 
 const app = express()
 const PORT = process.env.PORT || 8080;
@@ -25,6 +29,8 @@ app.use(session({
     secret:"musicStore"
 }))
 
+initializeStrategies()
+app.use(passport.initialize())
 
 app.engine('handlebars', Handlebars.engine())
 app.set('views',`${__dirname}/views`)

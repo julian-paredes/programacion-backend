@@ -1,56 +1,23 @@
 import { Router } from "express";
-import UsersManager from "../dao/mongo/managers/UsersManager.js";
+import passport from "passport";
+
 
 const router = Router()
-const usersService = new UsersManager()
+// const usersService = new UsersManager()
 
-router.post('/register', async(req,res) => {
-
-    const {
-        firstName,
-        lastName,
-        email,
-        age,
-        password
-    } = req.body
-
-    if(!firstName || !lastName || !email || !age || !password) return res.status(400).send({status: "error", message: "Complete todos los datos"})
-
-    const newUser = {
-        firstName,
-        lastName,
-        email,
-        age,
-        password
-    }
-
-    const result  = await usersService.createUser(newUser)
-    if (result) 
-    res.status(200).send({status: "success", payload: result._id})
+router.post('/register', passport.authenticate('register',{failureRedirect: '/api/sessions/authFail', failureMessage: true}),async(req,res) => {
+    res.status(200).send({status: "success", payload: req.user._id})
 })
 
 
-router.post('/login', async(req,res) => {
-    const {email,password} = req.body
-    if(!email || !password) return res.status(400).send({status: "error", message: "Complete todos los datos"})
+router.post('/login', passport.authenticate('login',{failureRedirect:'/api/sessions/authFail', failureMessage: true}), async(req,res) => {
 
-    if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
-        const adminUser = {
-            firstName: "Admin",
-            lastName: "Admin",
-            email: "adminCoder@coder.com",
-            role: "admin"
-        }
-        req.session.user = adminUser
-        res.send({status: 'success', message: 'Usuario logueado'})
-        return
-    }
+    req.session.user = req.user
+    res.send({status: "success", message: "User logged in"})
+})
 
-    const user = await usersService.getUserById({email,password})
-    if (!user) return res.status(400).send({status: "error", message: "Credenciales incorrectas"})
-    
-    req.session.user = user
-    res.send({status: 'success', message: 'Usuario logueado'})
+router.get('/authFail', (req,res) => {
+    res.status(401).send({status: "error", message:"Error de autenticacion"})
 })
 
 router.get('/logout', async (req,res) => {
@@ -63,5 +30,15 @@ router.get('/logout', async (req,res) => {
         }
     })
 })
+
+// router.get('/eliminarProductos',(req,res)=>{
+//     //Número uno, ¿Ya tiene credenciales (ya puedo identificarlo)?
+//     if(!req.session.user) return res.status(401).send({status:"error",error:"Not logged in"});
+//     //Si llega a esta línea, entonces ya sé quién es
+//     //Ahora necesito corroborar si tiene el permiso suficiente
+//     if(req.session.user.role!=="admin") return res.status(403).send({status:'error',error:'No permitido'});
+//     //Si llegué hasta acá, sí te conozco, y SÍ tienes permisos
+//     res.send({status:"success",message:"Productos eliminados"})
+// })
 
 export default router
