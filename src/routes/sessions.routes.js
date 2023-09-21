@@ -16,8 +16,18 @@ router.post('/login', passport.authenticate('login',{failureRedirect:'/api/sessi
     res.send({status: "success", message: "User logged in"})
 })
 
+// Autenticacion de terceros
+
+router.get('/github', passport.authenticate('github'), (req,res) => {}) //Trigger
+
+router.get('/githubcallback', passport.authenticate('github'),(req,res) => {    //Aqui se ve toda la info del user
+    req.session.user = req.user
+    res.redirect('/')
+})
+
 router.get('/authFail', (req,res) => {
-    res.status(401).send({status: "error", message:"Error de autenticacion"})
+    console.log(req.session.messages)
+     res.status(401).send({status:"error",error:"Error de input incompleto para estrategia de passport"})
 })
 
 router.get('/logout', async (req,res) => {

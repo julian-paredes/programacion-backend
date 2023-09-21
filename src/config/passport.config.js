@@ -1,5 +1,6 @@
 import passport from "passport"
 import local from "passport-local"
+import GithubStrategy from "passport-github2"
 import UsersManager from "../dao/mongo/managers/UsersManager.js"
 import authService from "../services/auth.js"
 
@@ -70,6 +71,31 @@ const initializeStrategies = () => {
 
 //FUTURAS ESTRATEGIAS COMO FACEBOOK, GITHUB, APPLE
 
+    passport.use('github', new GithubStrategy({
+        clientID: 'Iv1.4ca58e9502b99b00',
+        clientSecret: 'cf4428704a859af8cba59149d7e2a08705e92759',
+        callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
+    }, async (accessToken,refreshToken, profile, done) => {
+        console.log(profile)
+        const {email,name} = profile._json
+
+        // User validation
+        const user = await usersService.getUserById({email})
+        if (!user) {
+            const newUser = {
+                firstName: name,
+                email,
+                password: ''
+            }
+
+            const result = await usersService.createUser(newUser)
+            done(null,result)
+        } else {
+            done(null,user)
+        }
+    }))
+
+    
 
 passport.serializeUser((user,done) => {
     return done(null,user._id)
