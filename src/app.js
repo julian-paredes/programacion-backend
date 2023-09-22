@@ -9,6 +9,7 @@ import productsRouter from "./routes/product.routes.js"
 import viewRouter from "./routes/views.routes.js"
 import cartsRouter from "./routes/cart.routes.js"
 import sessionsRouter from "./routes/sessions.routes.js"
+import loginJWTRouter from "./routes/pruebaJWT/loginJWT.js"
 import __dirname from "./utils.js"
 import initializeStrategies from "./config/passport.config.js";
 
@@ -44,3 +45,4 @@ app.use('/', viewRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/api/sessions', sessionsRouter)
+app.use('/api/sessions', loginJWTRouter)

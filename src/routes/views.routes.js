@@ -66,4 +66,22 @@ router.get('/login', async (req,res) => {
   }
 })
 
+router.get('/loginJWT', async (req,res) => {
+
+  try {
+    res.render('loginjwt',{})
+  } catch (error) {
+    res.json({ error: error });
+  }
+})
+
+router.get('/profilejwt', async (req,res) => {
+  try {
+    res.render('profilejwt', {})
+  } catch (error) {
+    res.json({ error: error });
+  }
+})
+
+
 export default router
