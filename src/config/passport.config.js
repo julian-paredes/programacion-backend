@@ -45,19 +45,17 @@ const initializeStrategies = () => {
     passport.use('login', new LocalStrategy({usernameField:'email'}, async (email,password,done) => {
         if(!email || !password) return done(null,false,{message: "Incomplete values"})
     
-        // if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
+        if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
 
-        //     const adminUser = {
-        //         firstName: "Admin",
-        //         lastName: "Admin",
-        //         email: "adminCoder@coder.com",
-        //         role: "admin"
-        //     }
-
-        //     req.session.user = adminUser
-        //     res.send({status: 'success', message: 'Usuario logueado'})
-        //     return
-        // }
+            const adminUser = {
+                _id: "admin-id",
+                firstName: "Admin",
+                lastName: "Admin",
+                email: "adminCoder@coder.com",
+                role: "admin"
+            }
+       return done(null,adminUser)
+        }
     
         const user = await usersService.getUserById({email})
         if (!user) return done(null,false,{message: "Incorrect credentials"})
