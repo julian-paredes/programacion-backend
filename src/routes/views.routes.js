@@ -20,7 +20,6 @@ router.get("/", async (req, res) => {
       isUserRole = true 
     }
  
-    
     res.render("home",
      {
       user, 

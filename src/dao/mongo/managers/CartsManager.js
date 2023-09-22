@@ -2,20 +2,19 @@ import cartsModel from "../models/carts.js"
 
 export default class CartsManager {
 
-   getCartById = (id) => {
-    return cartsModel.findOne({_id: id}).populate('products.product')
+   getCartById = (id, options) => {
+      if (options.populate){
+         return cartsModel.findOne(id).populate('products.product')
+      }
+      return cartsModel.findOne({_id: id})
    }
 
-   getCarts = () => {
-      return cartsModel.find().populate('products.product')
-   }
-   
-   createCart = (cart) => {
-    return cartsModel.create({products: cart})
+   createCart = () => {
+    return cartsModel.create({products: []})
    }
 
-   updateCart = (cid,newCart) => {
-    return cartsModel.updateOne({_id: cid},{$push: {products: newCart}})
+   updateCart = (cid,cart) => {
+    return cartsModel.updateOne({_id: cid},{$set: cart})
    }
 
    updateCarttUnits = (cid,pid, newQuantity) => {

@@ -6,18 +6,11 @@ const router = Router()
 const cartsService = new CartsManager()
 const productsService = new ProductsManager()
 
-router.get("/", async (req,res) => {
-  try {
-    const carts = await cartsService.getCarts()
-    res.send({status: "success", payload: carts})
-  } catch (error) {
-    res.status(400).send({status: "error", message: error.message})
-  }
-})
-
 router.get("/:cid", async (req, res) => {
   try {
-    const cart = await cartsService.getCartById(req.params.cid);
+    const {cid} = req.params
+    const cart = await cartsService.getCartById({_id: cid},{populate:true});
+    if(!cart) return res.status(400).send({status: "error", message: "Cart no found"})
     res.send({status: "success", payload: cart });
   } catch (error) {
     res.status(404).send({ message: error.message });
@@ -27,9 +20,8 @@ router.get("/:cid", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const cartData = req.body
-    const cart = await cartsService.createCart(cartData)
-    res.send({status: "success", payload: cart });
+    const cart = await cartsService.createCart()
+    res.send({status: "success", payload: cart._id });
   } catch (error) {
     res.status(400).send({ status: "error", message: error.message });
   }
@@ -39,13 +31,15 @@ router.post("/:cid/product/:pid", async (req, res) => {
   try {
     const {cid,pid} = req.params
     
-    const cart = await cartsService.getCartById(cid)
+    const cart = await cartsService.getCartById({_id: cid},{populate:false})
     if(!cart) return res.status(400).send({status: "error", message: "Cart not found."})
 
-    const productExists = await productsService.getProductsById(pid)
+    const productExists = await productsService.getProductsById({_id: pid})
     if(!productExists) return res.status(400).send({status: "error", message: "Product doesn't exist."})
 
-    const productIsInCart = cart.products.find(({product}) => product.equals(pid))
+    const productIsInCart = cart.products.find((item) => {
+      return item.product.toString() === pid
+    })
 
     if (!productIsInCart) {
       cart.products.push({ product: pid, quantity: 1 })
@@ -53,7 +47,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
       productIsInCart.quantity++      
     }
     
-    await cartsService.updateCart(cid,cart.products);
+    await cartsService.updateCart(cid,{products: cart.products});
     res.send({status: "success", payload: "Product added." });
   } catch (error) {
     res.status(400).send({ message: error.message });

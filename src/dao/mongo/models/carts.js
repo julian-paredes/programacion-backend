@@ -23,9 +23,9 @@
     { timestamps: true }
   );
 
-  schema.pre(['find','findOne'],function(){
-    this.populate('products.product');
-})
+//   schema.pre(['find','findOne'],function(){
+//     this.populate('products.product');
+// })
 
   const cartsModel = mongoose.model(collection, schema);
 
