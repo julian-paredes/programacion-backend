@@ -25,9 +25,14 @@ router.get('/githubcallback', passport.authenticate('github'),(req,res) => {    
     res.redirect('/')
 })
 
-router.get('/authFail', (req,res) => {
-    console.log(req.session.messages)
-     res.status(401).send({status:"error",error:"Error de input incompleto para estrategia de passport"})
+router.get('/authFail',(req,res)=>{
+    //Si cayó a este endpoint, significa que falló.
+    console.log(req.session.messages);
+    if(req.session.messages){
+        res.status(401).send({status:"error",error:req.session.messages[0]})
+    }else{
+        res.status(401).send({status:"error",error:"Error de input incompleto para estrategia de passport"})
+    }
 })
 
 router.get('/logout', async (req,res) => {

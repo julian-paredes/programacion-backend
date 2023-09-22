@@ -18,7 +18,6 @@ const app = express()
 const PORT = process.env.PORT || 8080;
 
 const server = app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
-const connection = mongoose.connect("mongodb+srv://julikmet24:123@cluster-jp.2shwvcf.mongodb.net/musicStore?retryWrites=true&w=majority")
 
 app.use(session({
     store: MongoStore.create({
@@ -33,6 +32,8 @@ app.use(session({
 initializeStrategies()
 app.use(passport.initialize())
 
+const connection = mongoose.connect("mongodb+srv://julikmet24:123@cluster-jp.2shwvcf.mongodb.net/musicStore?retryWrites=true&w=majority")
+
 app.engine('handlebars', Handlebars.engine())
 app.set('views',`${__dirname}/views`)
 app.set('view engine', 'handlebars')
@@ -45,4 +46,4 @@ app.use('/', viewRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/api/sessions', sessionsRouter)
-app.use('/api/sessions', loginJWTRouter)
+// app.use('/api/sessions', loginJWTRouter)
