@@ -21,4 +21,8 @@ export default class ProductsManager {
     deleteProduct = (id) => {
         return productsModel.deleteOne({_id: id})
     }
+
+    paginateProducts = (params, paginateOptions) => {
+        return productsModel.paginate(params,paginateOptions)
+    }
 }

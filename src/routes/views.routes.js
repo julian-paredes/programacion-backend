@@ -7,19 +7,17 @@ const productsService = new ProductsManager()
 router.get("/", async (req, res) => {
   try {
     const {page = 1,limit = 10} = req.query
-    const paginationResult = await productsService.getProducts(page,limit)
-  
+    // const paginationResult = await productsService.getProducts(page,limit)
+    const paginationResult = await productsService.paginateProducts({},{page,limit,lean:true})
+
     const products = paginationResult.docs;
     const currentPage = paginationResult.page;
     const {hasPrevPage, hasNextPage, prevPage, nextPage} = paginationResult;
     const {user} = req.session
-
     let isUserRole = null
-
     if (user.role === "user") {
       isUserRole = true 
     }
- 
     res.render("home",
      {
       user, 
