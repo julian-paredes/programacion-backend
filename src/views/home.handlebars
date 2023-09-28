@@ -20,6 +20,7 @@
           <p class="card-text">Stock: {{this.stock}}</p>
           <p class="card-text">Precio: ${{this.price}}</p>
         </div>
+        <button onclick="addProduct('{{this._id}}')">Agregar al carrio</button>
       </div>
     </div>
   {{/each}}
@@ -36,4 +37,6 @@
     <a href="/?page={{nextPage}}"><button>Siguiente</button></a>
   {{/if}}
 </div>
+
+<script src="/js/home.js"></script>
 

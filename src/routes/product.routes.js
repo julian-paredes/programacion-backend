@@ -8,30 +8,9 @@ const productsService = new ProductsManager()
 //endpoint "/products"
 router.get("/", async (req, res) => {
     try {
-    const {page = 1,limit = 10} = req.query
-    const paginationResult = await productsService.getProducts(page,limit)
 
-    const products = paginationResult.docs;
-    const currentPage = paginationResult.page;
-    const {hasPrevPage, hasNextPage, prevPage, nextPage,totalDocs,totalPages} = paginationResult;
-
-    const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT || 8080}${req.baseUrl}`
-    const prevLink = hasPrevPage ? `${baseUrl}?page=${prevPage}&limit=${limit}` : null
-    const nextLink = hasNextPage ? `${baseUrl}?page=${nextPage}&limit=${limit}` : null
-
-    const paginationData = {
-      currentPage,
-      hasPrevPage,
-      hasNextPage,
-      prevPage,
-      nextPage,
-      totalDocs,
-      totalPages,
-      prevLink,
-      nextLink
-    }
-
-    res.send({status: "success", payload: products, ...paginationData})
+    const products = await productsService.getProducts()
+    res.send({status: "success", payload: products })
     } catch (error) {
       res.json({ error: error });
     }
@@ -74,11 +53,17 @@ router.get("/", async (req, res) => {
         category,
         thumbnail,
       }
-      
+      const products = await productsService.getProducts()
+
+      const codeNotAvailable = products.find(product => product.code === code)
+
+      if (codeNotAvailable) {
+        return res.status(400).send({status: "error", message: "Product code has already been used"})
+      }
       const result = await productsService.createProduct(newProduct)
-      res.send({status: "success", payload: result._id});
+      res.send({status: "success", message: "Product added", payload: result._id});
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(400).send({ message: error.message });
     }
   });
   

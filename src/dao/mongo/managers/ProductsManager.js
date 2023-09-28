@@ -2,8 +2,8 @@ import productsModel from "../models/products.js";
 
 export default class ProductsManager {
 
-    getProducts = (page,limit) => {
-        return productsModel.paginate({},{page,limit,lean:true})
+    getProducts = () => {
+        return productsModel.find().lean()
     }
 
     getProductsById = (pid) => {

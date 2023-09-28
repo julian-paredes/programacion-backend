@@ -1,18 +1,27 @@
 import { Router } from "express";
 import ProductsManager from "../dao/mongo/managers/ProductsManager.js";
+import { getValidFilters } from "../services/getValidFilters.js";
 
 const router = Router()
 const productsService = new ProductsManager()
 
 router.get("/", async (req, res) => {
   try {
-    const {page = 1,limit = 10} = req.query
-    // const paginationResult = await productsService.getProducts(page,limit)
-    const paginationResult = await productsService.paginateProducts({},{page,limit,lean:true})
-
+    const {page = 1,limit = 10, sort, order, ...filters} = req.query    
+    const cleanFilters = getValidFilters(filters,'product')
+    let sortResult = {}
+    if(sort){
+      sortResult[sort] = order
+    }
+    const paginationResult = await productsService.paginateProducts(cleanFilters,{page,limit,lean:true,sort: sortResult})
     const products = paginationResult.docs;
     const currentPage = paginationResult.page;
     const {hasPrevPage, hasNextPage, prevPage, nextPage} = paginationResult;
+
+    const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT || 8080}${req.baseUrl}`
+    const prevLink = hasPrevPage ? `${baseUrl}?page=${prevPage}&limit=${limit}` : null
+    const nextLink = hasNextPage ? `${baseUrl}?page=${nextPage}&limit=${limit}` : null
+
     const {user} = req.session
     let isUserRole = null
     if (user.role === "user") {
@@ -27,7 +36,9 @@ router.get("/", async (req, res) => {
       hasPrevPage,
       hasNextPage,
       prevPage,
-      nextPage
+      nextPage,
+      prevLink,
+      nextLink
   });  
   } catch (error) {
     res.json({ error: error });

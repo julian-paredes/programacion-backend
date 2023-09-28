@@ -48,7 +48,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
     }
     
     await cartsService.updateCart(cid,{products: cart.products});
-    res.send({status: "success", payload: "Product added." });
+    res.send({status: "success", payload: "Product added to cart." });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
@@ -58,7 +58,7 @@ router.put("/:cid", async (req,res) => {
   try {
     const {cid} = req.params
     const newProducts = req.body
-    const cart = await cartsService.getCartById(cid)
+    const cart = await cartsService.getCartById({_id: cid},{populate:false})
     if (!cart) return res.status(400).send({status: "error", message: "Cart not found"})
     
     await cartsService.updateCart(cid,newProducts);
@@ -73,7 +73,7 @@ router.put("/:cid/products/:pid", async (req,res) => {
    try {
     const {cid,pid} = req.params
     const newQuantity = req.body
-    const cart = await cartsService.getCartById(cid)
+    const cart = await cartsService.getCartById({_id: cid},{populate:false})
     if (!cart) return res.status(400).send({status: "error", message: "Cart not found"})    
     const productExists = await productsService.getProductsById(pid)
     if(!productExists) return res.status(400).send({status: "error", message: "Product doesn't exist."})
@@ -91,7 +91,7 @@ router.put("/:cid/products/:pid", async (req,res) => {
 })
 
 router.delete("/:cid", async (req,res) => {
-  const cartExists = await cartsService.getCartById(req.params.cid)
+  const cartExists = await cartsService.getCartById({_id: cid},{populate:false})
   if(!cartExists) return res.status(400).send({status: "error", message: "Product not found."})
   else {
     const result = await cartsService.deleteAllProductsFromCartById(req.params.cid)
@@ -103,17 +103,18 @@ router.delete("/:cid/products/:pid", async (req,res) => {
   try {
     const {cid,pid} = req.params
 
-    const cart = await cartsService.getCartById(cid)
+    const cart = await cartsService.getCartById({_id: cid},{populate:false})
     if(!cart) return res.status(400).send({status: "error", message: "Cart not found."})
   
     const productExists = await productsService.getProductsById(pid)
     if(!productExists) return res.status(400).send({status: "error", message: "Product doesn't exist."})
   
     const productIsInCart = cart.products.find(({product}) => product.equals(pid))
-  
+    console.log("productIsInCart", productIsInCart);
+
     if(!productIsInCart) return res.status(400).send({status: "error", message: "Product not found in cart."})
   
-    await cartsService.deleteProductFromCartById(cid,pid)
+    const result = await cartsService.deleteProductFromCartById(cid,pid)
     res.send({status: "success", message: "Product deleted."})
   
   } catch (error) {
