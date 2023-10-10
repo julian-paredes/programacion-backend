@@ -16,7 +16,7 @@ loginForm.addEventListener('submit', async e => {
     })
 
     const result = await response.json()
-    if (response.status === 200) {
-        window.location.replace('/')
-    }
+    // if (response.status === 200) {
+    //     window.location.replace('/')
+    // }
 })

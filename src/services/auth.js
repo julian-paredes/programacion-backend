@@ -5,11 +5,20 @@ const createHash = async (password) => {
     return bcrypt.hash(password,salts)
 }
 
-const validatePassword = (password,hashedPassword) => {
+const validatePassword = async (password,hashedPassword) => {
     return bcrypt.compare(password,hashedPassword)
+}
+
+const extractAuthToken = (req) => {
+    let token = null
+    if (req.cookies) {
+        token = req.cookies['authCookie']
+    }
+    return token
 }
 
 export default {
     createHash,
-    validatePassword
+    validatePassword,
+    extractAuthToken
 }

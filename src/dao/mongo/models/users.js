@@ -13,7 +13,10 @@ const schema = new mongoose.Schema({
         enum:['user','admin'],
         default: 'user'
     },
-
+    library: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Carts'
+    },
 })
 
 const usersModel = mongoose.model(collection,schema)

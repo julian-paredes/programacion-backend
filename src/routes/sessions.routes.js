@@ -1,24 +1,36 @@
 import { Router } from "express";
-import passport from "passport";
-
+import passport, { session } from "passport";
+import jwt from "jsonwebtoken";
 
 const router = Router()
 // const usersService = new UsersManager()
 
-router.post('/register', passport.authenticate('register',{failureRedirect: '/api/sessions/authFail', failureMessage: true}),async(req,res) => {
+router.post('/register', passport.authenticate('register',{failureRedirect: '/api/sessions/authFail', session: false}),async(req,res) => {
     res.status(200).send({status: "success", payload: req.user._id})
 })
 
 
-router.post('/login', passport.authenticate('login',{failureRedirect:'/api/sessions/authFail', failureMessage: true}), async(req,res) => {
+router.post('/login', passport.authenticate('login',{failureRedirect:'/api/sessions/authFail', session: false}), async(req,res) => {
+    
+    const tokenizedUser = {
+        name: `${req.user.firstName} ${req.user.lastName}`,
+        id: req.user._id,
+        role: req.user.role
+    }
+    const token = jwt.sign(tokenizedUser,'secretjwtmusicstore',{expiresIn:'2h'})
+    res.cookie('authCookie', token, {httpOnly: true}).send({status:"success", message: "Logged in"})
 
-    req.session.user = req.user
     res.send({status: "success", message: "User logged in"})
+})
+
+router.get('/current',passport.authenticate('jwt', {session: false}), async (req,res) => {
+    const user = req.user
+    res.send({status: "success", payload: user})
 })
 
 // Autenticacion de terceros
 
-router.get('/github', passport.authenticate('github'), (req,res) => {}) //Trigger
+router.get('/github', passport.authenticate('github',{session: false}), (req,res) => {}) //Trigger
 
 router.get('/githubcallback', passport.authenticate('github'),(req,res) => {    //Aqui se ve toda la info del user
     req.session.user = req.user
@@ -46,14 +58,6 @@ router.get('/logout', async (req,res) => {
     })
 })
 
-// router.get('/eliminarProductos',(req,res)=>{
-//     //Número uno, ¿Ya tiene credenciales (ya puedo identificarlo)?
-//     if(!req.session.user) return res.status(401).send({status:"error",error:"Not logged in"});
-//     //Si llega a esta línea, entonces ya sé quién es
-//     //Ahora necesito corroborar si tiene el permiso suficiente
-//     if(req.session.user.role!=="admin") return res.status(403).send({status:'error',error:'No permitido'});
-//     //Si llegué hasta acá, sí te conozco, y SÍ tienes permisos
-//     res.send({status:"success",message:"Productos eliminados"})
-// })
+
 
 export default router
