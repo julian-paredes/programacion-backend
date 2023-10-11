@@ -110,7 +110,6 @@ router.delete("/:cid/products/:pid", async (req,res) => {
     if(!productExists) return res.status(400).send({status: "error", message: "Product doesn't exist."})
   
     const productIsInCart = cart.products.find(({product}) => product.equals(pid))
-    console.log("productIsInCart", productIsInCart);
 
     if(!productIsInCart) return res.status(400).send({status: "error", message: "Product not found in cart."})
   

@@ -3,24 +3,22 @@ import mongoose from "mongoose";
 import Handlebars from "express-handlebars"
 import session from "express-session";
 import MongoStore from 'connect-mongo'
-import passport from "passport";
 import cookieParser from "cookie-parser";
 import productsRouter from "./routes/product.routes.js"
 import viewRouter from "./routes/views.routes.js"
 import cartsRouter from "./routes/cart.routes.js"
 // import sessionsRouter from "./routes/old.sessions.routes.js"
-import loginJWTRouter from "./routes/pruebaJWT/loginJWT.js"
+// import loginJWTRouter from "./routes/pruebaJWT/loginJWT.js"
 import sessionsRouter from "./routes/newSessions.routes.js"
 
 import __dirname from "./utils.js"
 import initializeStrategies from "./config/passport.config.js";
 import cartSetter from "./middlewares/cartSetter.js";
+import config from "./config/config.js";
 
 
 const app = express()
-const PORT = process.env.PORT || 8080;
-
-const server = app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+const server = app.listen(config.app.PORT, () => console.log(`Listening on port ${config.app.PORT}`))
 
 app.use(session({
     store: MongoStore.create({
@@ -34,7 +32,7 @@ app.use(session({
 
 initializeStrategies()
 
-const connection = mongoose.connect("mongodb+srv://julikmet24:123@cluster-jp.2shwvcf.mongodb.net/musicStore?retryWrites=true&w=majority")
+const connection = mongoose.connect(config.mongo.MONGO_URL)
 
 app.engine('handlebars', Handlebars.engine())
 app.set('views',`${__dirname}/views`)

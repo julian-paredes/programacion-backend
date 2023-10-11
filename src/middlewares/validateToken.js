@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import config from "../config/config.js"
 
 export const validateJWT = (req,res,next) => {
 
@@ -6,7 +7,7 @@ export const validateJWT = (req,res,next) => {
         const authHeader = req.headers.authorization
         if(!authHeader) return res.status(401).send({status: "error", message: "User not loggeed"})    
         const token = authHeader.split(' ')[1]
-        const userInfo = jwt.verify(token,'secretjwtmusicstore')
+        const userInfo = jwt.verify(token,config.jwt.JWT_SECRET)
         req.user = userInfo
         next()
     } catch (error) {

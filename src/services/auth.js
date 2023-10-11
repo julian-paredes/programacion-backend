@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import config from '../config/config.js'
 
 const createHash = async (password) => {
     const salts = await bcrypt.genSalt(10)
@@ -12,7 +13,7 @@ const validatePassword = async (password,hashedPassword) => {
 const extractAuthToken = (req) => {
     let token = null
     if (req.cookies) {
-        token = req.cookies['authCookie']
+        token = req.cookies[config.jwt.JWT_COOKIE]
     }
     return token
 }

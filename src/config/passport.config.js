@@ -4,6 +4,7 @@ import GithubStrategy from "passport-github2"
 import UsersManager from "../dao/mongo/managers/UsersManager.js"
 import authService from "../services/auth.js"
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt"
+import config from "./config.js"
 
 // Estrategia local : Registro y Login
 // Varios no suelen colocar el registro en passport porque es una Operacion diferente a la autenticación
@@ -39,7 +40,7 @@ const initializeStrategies = () => {
             password: hashPassword
         }
         const result  = await usersService.createUser(newUser)
-        done(null,result)
+        return done(null,result)
     }))
 
     passport.use('login', new LocalStrategy({usernameField:'email', session: false}, async (email,password,done) => {
@@ -63,7 +64,7 @@ const initializeStrategies = () => {
         const isValidPassword = await authService.validatePassword(password,user.password)
         if (!isValidPassword) return done(null,false,{message: "Incorrect credentials"})
 
-        done(null,user)
+        return done(null,user)
     }))
 
     passport.use('github', new GithubStrategy({
@@ -71,7 +72,6 @@ const initializeStrategies = () => {
         clientSecret: '4508a50d82782bda676ab4a3dd332471c5216d81',
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     }, async (accessToken,refreshToken, profile, done) => {
-        console.log(profile)
         const {email,name} = profile._json
 
         // User validation
@@ -93,7 +93,7 @@ const initializeStrategies = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([authService.extractAuthToken]),
-        secretOrKey: 'secretjwtmusicstore'
+        secretOrKey: config.jwt.JWT_SECRET
     }, async (payload, done) => {
         return done(null, payload)
     }))

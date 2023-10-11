@@ -9,9 +9,7 @@ export default class BaseRouter {
         this.init()
     }
 
-    init(){
-
-    }
+    init(){}
 
     getRouter() {
         return this.router

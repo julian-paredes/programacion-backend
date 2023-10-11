@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
         enum:['user','admin'],
         default: 'user'
     },
-    library: {
+    cart: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Carts'
     },
