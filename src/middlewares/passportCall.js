@@ -17,6 +17,9 @@ const passportCall = (strategy, options={}) => {
                     case 'JWT': {
                         req.user = null;
                         return next();
+                    }
+                    case 'GITHUB': {
+                        return res.status(401).send({status: "error", error: info.message ? info.message : info.toString()})
                     }                                        
                 }
             } 

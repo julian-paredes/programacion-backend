@@ -5,6 +5,7 @@ import UsersManager from "../dao/mongo/managers/UsersManager.js"
 import authService from "../services/auth.js"
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt"
 import config from "./config.js"
+import CartsManager from "../dao/mongo/managers/CartsManager.js"
 
 // Estrategia local : Registro y Login
 // Varios no suelen colocar el registro en passport porque es una Operacion diferente a la autenticación
@@ -12,6 +13,7 @@ import config from "./config.js"
 const LocalStrategy = local.Strategy // Siempre significa username + password. Passport odia el email, pero podemos hacer una logica de negocio entre libreria/desarrollador
 
 const usersService = new UsersManager()
+const cartsService = new CartsManager()
 
 
 const initializeStrategies = () => {
@@ -37,8 +39,21 @@ const initializeStrategies = () => {
             lastName,
             email,
             age,
-            password: hashPassword
+            password: hashPassword,
         }
+
+        //Reviso el cart temporal
+
+        let cart;
+        if (req.cookies['cart']){
+            cart = req.cookies['cart']
+        } else { // Si no existe el cart temporal, lo creo
+            cartResult = await cartsService.createCart()
+            cart = cartResult._id
+        }
+
+        newUser.cart = cart
+
         const result  = await usersService.createUser(newUser)
         return done(null,result)
     }))
@@ -46,7 +61,7 @@ const initializeStrategies = () => {
     passport.use('login', new LocalStrategy({usernameField:'email', session: false}, async (email,password,done) => {
         if(!email || !password) return done(null,false,{message: "Incomplete values"})
     
-        if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
+        if (email === config.app.ADMIN_EMAIL && password === config.app.ADMIN_PASS){
 
             const adminUser = {
                 _id: "admin-id",
