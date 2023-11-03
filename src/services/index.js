@@ -1,8 +1,11 @@
-import ProductsService from "./ProductsService.js";
-import CartsService from "./CartsService.js";
-import ProductsManager from "../dao/mongo/managers/ProductsManager.js";
-import CartsManager from "../dao/mongo/managers/CartsManager.js";
+import ProductsRepository from "./repositories/ProductsRepository.js";
+import CartsRepository from "./repositories/CartsRepository.js";
+import UsersRepository from "./repositories/UsersRepository.js"
 
+import PersistenceFactory from "../dao/PersistenceFactory.js";
 
-export const productsService = new ProductsService(new ProductsManager())
-export const cartsService = new CartsService(new CartsManager())
+const { ProductsDao, CartsDao, UsersDao } = await PersistenceFactory.getPersistence()
+
+export const productsService = new ProductsRepository(new ProductsDao())
+export const cartsService = new CartsRepository(new CartsDao())
+export const usersService = new UsersRepository(new UsersDao())

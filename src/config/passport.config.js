@@ -1,19 +1,19 @@
 import passport from "passport"
 import local from "passport-local"
 import GithubStrategy from "passport-github2"
-import UsersManager from "../dao/mongo/managers/UsersManager.js"
+import UsersDao from "../dao/mongo/UsersDao.js"
 import authService from "../services/auth.js"
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt"
 import config from "./config.js"
-import CartsManager from "../dao/mongo/managers/CartsManager.js"
+import CartsDao from "../dao/mongo/CartsDao.js"
 
 // Estrategia local : Registro y Login
 // Varios no suelen colocar el registro en passport porque es una Operacion diferente a la autenticación
 
 const LocalStrategy = local.Strategy // Siempre significa username + password. Passport odia el email, pero podemos hacer una logica de negocio entre libreria/desarrollador
 
-const usersService = new UsersManager()
-const cartsService = new CartsManager()
+const usersService = new UsersDao()
+const cartsService = new CartsDao()
 
 
 const initializeStrategies = () => {
