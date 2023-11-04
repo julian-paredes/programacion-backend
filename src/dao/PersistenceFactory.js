@@ -7,6 +7,7 @@ export default class PersistenceFactory {
         let ProductsDao
         let CartsDao
         let UsersDao
+        let TicketsDao
 
         switch (config.app.PERSISTENCE) {
             case "FS": {
@@ -18,7 +19,7 @@ export default class PersistenceFactory {
                 ProductsDao = (await import("./mongo/ProductsDao.js")).default
                 CartsDao = (await import("./mongo/CartsDao.js")).default
                 UsersDao = (await import("./mongo/UsersDao.js")).default
-
+                TicketsDao = (await import("./mongo/TicketsDao.js")).default
             break;
             }
         }
@@ -27,6 +28,7 @@ export default class PersistenceFactory {
             ProductsDao,
             CartsDao,
             UsersDao,
+            TicketsDao
         }
     }
 }

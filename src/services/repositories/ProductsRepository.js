@@ -1,26 +1,26 @@
 
-export default class ProductsService {
-    constructor(manager){
-        this.manager = manager
+export default class ProductsRepository {
+    constructor(dao){
+        this.dao = dao
     }
 
     getProducts = () => {
-        return this.manager.getProducts()
+        return this.dao.getProducts()
     }
 
     getProductsById = (pid) => {
-        return this.manager.getProductsById(pid)
+        return this.dao.getProductsById(pid)
     }
 
-    createProduct = () => {
-        return this.manager.createProduct()
+    createProduct = (newProduct) => {
+        return this.dao.createProduct(newProduct)
     }
 
     updateProduct = (id,product) => {
-        return this.manager.updateProduct(id,product)
+        return this.dao.updateProduct(id,product)
     }
 
     deleteProduct = (id) => {
-        return this.manager.deleteProduct(id)
+        return this.dao.deleteProduct(id)
     }
 }

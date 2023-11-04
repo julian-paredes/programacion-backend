@@ -1,4 +1,4 @@
-import { cartsService, productsService } from "../services/index.js";
+import { cartsService, productsService, ticketsService } from "../services/index.js";
 
 const getCartById = async (req, res) => {
     try {
@@ -133,13 +133,66 @@ const deleteProductFromCartById = async (req,res) => {
   }
 
 const deleteAllProductsFromCartById = async (req,res) => {
+  try {
     const cartExists = await cartsService.getCartById({_id: cid},{populate:false})
     if(!cartExists) return res.status(400).send({status: "error", message: "Product not found."})
     else {
       const result = await cartsService.deleteAllProductsFromCartById(req.params.cid)
       res.send({status: "success", message: "All products have been deleted from cart."})
     }
+  } catch (error) {
+    res.status(400).send({status: "error", message: error.message})
   }
+}
+
+const purchaseCart = async (req,res) => {
+  try {
+    const {cid} = req.params
+
+    const cart = await cartsService.getCartById({_id: cid},{populate:true})
+    if(!cart) return res.status(400).send({status: "error", message: "Cart not found."})
+
+    const productosProcesados = []
+    let sumTotal = 0
+
+    for (const item of cart.products) {
+      let product = item.product
+      let quantity = item.quantity
+      let stock = product.stock
+      let amount = product.price
+
+      if (quantity <= stock) {
+        let newStock = stock - quantity
+
+        // const stockModified = await productsService.updateProduct({_id: product._id},{stock: newStock})
+        // if (!stockModified) res.status(400).send({status: "error", message: error.message})
+        productosProcesados.push(item);
+        console.log(`Producto ${product.code} procesado en compra`);
+
+        sumTotal += amount
+
+      } else {
+        console.log(`No podes comprar el producto ${product.code} debido a la falta de stock suficiente.`);
+      }
+    }
+    const codeTicket = Date.now().toString(15);
+
+    const newTicket = {
+      code: codeTicket,
+      amount: sumTotal,
+      purchaser: "prueba@gmail.com"
+    }
+
+    console.log(newTicket);
+
+    const ticketResult = await ticketsService.createTicket(newTicket)
+
+    if (ticketResult)
+    res.status(200).send({status: "success", message: "Your order has been purchased!"})
+  } catch (error) {
+    res.status(400).send({status: "error", message: error.message})
+  }
+}
 
 
 
@@ -151,5 +204,6 @@ export default {
     updateCarttUnits,
     addProductToCartInBody,
     deleteProductFromCartById,
-    deleteAllProductsFromCartById
+    deleteAllProductsFromCartById,
+    purchaseCart
 }

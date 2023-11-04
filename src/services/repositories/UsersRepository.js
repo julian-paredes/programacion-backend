@@ -1,26 +1,26 @@
 
-export default class UsersService {
-    constructor(manager) {
-        this.manager = manager
+export default class UsersRepository {
+    constructor(dao) {
+        this.dao = dao
     }
 
     getUsers = () => {
-        return this.manager.getUsers()
+        return this.dao.getUsers()
     }
 
     getUserById = (params) => {
-        return this.manager.getUserById(params)
+        return this.dao.getUserById(params)
     }
 
     createUser = (user) => {
-        return this.manager.createUser(user)
+        return this.dao.createUser(user)
     }
 
     updateUser = (id,user) => {
-        return this.manager.updateUser(id,user)
+        return this.dao.updateUser(id,user)
     }
 
     deleteUser = (id) => {
-        return this.manager.deleteUser(id)
+        return this.dao.deleteUser(id)
     }
 }
