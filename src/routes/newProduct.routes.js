@@ -6,6 +6,8 @@ class newProductRouter extends BaseRouter {
 
         this.get("/",['NO_AUTH'], productsController.getProducts);
 
+        this.get("/mockingProducts", ['PUBLIC'], productsController.generateProducts);
+
         this.get("/:pid",['NO_AUTH'], productsController.getProductsById);
 
         this.post("/",['ADMIN'], productsController.createProduct);

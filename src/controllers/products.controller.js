@@ -1,3 +1,4 @@
+import { generateProduct } from "../mocks/products.js";
 import { productsService } from "../services/index.js";
 
 
@@ -103,10 +104,25 @@ const deleteProduct = async (req,res) => {
     }
 }
 
+const generateProducts = (req,res) => {
+  try {
+    const products = []
+    for (let i=0; i<100; i++) {
+      const product = generateProduct()
+      products.push(product)
+    }
+    res.send({status: "success", payload: products})
+  } catch (error) {
+    console.log(error);
+    res.json({ error: error.message });     
+  }
+}
+
   export default {
     getProducts,
     getProductsById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    generateProducts
   }
