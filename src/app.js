@@ -12,6 +12,7 @@ import sessionsRouter from "./routes/newSessions.routes.js"
 import __dirname from "./utils.js"
 import initializeStrategies from "./config/passport.config.js";
 import config from "./config/config.js";
+import attachLogger from "./middlewares/attachLogger.js";
 
 
 const app = express()
@@ -40,7 +41,14 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 
+app.use(attachLogger)
+
 app.use('/', viewRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/api/sessions', sessionsRouter)
+
+app.get('/loggerTest', (req,res) => {
+    req.logger.error('ERROR')
+    req.logger.fatal('FATAL ERROR')
+})

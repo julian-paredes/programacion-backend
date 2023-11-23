@@ -18,7 +18,8 @@ export default {
         PORT: process.env.PORT || 8080,
         ADMIN_EMAIL: process.env.ADMIN_EMAIL,
         ADMIN_PASS: process.env.ADMIN_PASS,
-        PERSISTENCE: process.env.PERSISTENCE || "MONGO"
+        PERSISTENCE: process.env.PERSISTENCE || "MONGO",
+        ENV: process.env.ENV
     },
 
     mongo: {
