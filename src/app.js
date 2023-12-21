@@ -4,11 +4,13 @@ import Handlebars from "express-handlebars"
 import session from "express-session";
 import MongoStore from 'connect-mongo'
 import cookieParser from "cookie-parser";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUIExpress from "swagger-ui-express";
+
 import productsRouter from "./routes/newProduct.routes.js"
 import viewRouter from "./routes/newViews.routes.js"
 import cartsRouter from "./routes/newCart.routes.js"
 import sessionsRouter from "./routes/newSessions.routes.js"
-
 import __dirname from "./utils.js"
 import initializeStrategies from "./config/passport.config.js";
 import config from "./config/config.js";
@@ -31,6 +33,21 @@ app.use(session({
 initializeStrategies()
 
 const connection = mongoose.connect(config.mongo.MONGO_URL)
+
+const swaggerSpecOptions = {
+    definition: {
+        openapi: "3.0.1",
+        info: {
+            title: "Music Store API",
+            version: "1.0.0",
+            description: "Music Store API Information",
+        },
+    },
+    apis: [`${__dirname}/docs/**/*.yml`],
+}
+
+const swaggerSpec = swaggerJSDoc(swaggerSpecOptions)
+app.use("/apidocs", swaggerUIExpress.serve, swaggerUIExpress.setup(swaggerSpec))
 
 app.engine('handlebars', Handlebars.engine())
 app.set('views',`${__dirname}/views`)
