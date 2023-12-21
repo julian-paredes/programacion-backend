@@ -23,4 +23,8 @@ export default class ProductsRepository {
     deleteProduct = (id) => {
         return this.dao.deleteProduct(id)
     }
+
+    paginateProducts = (params, options) => {
+        return this.dao.paginateProducts(params, options)
+}
 }

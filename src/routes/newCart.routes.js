@@ -21,7 +21,7 @@ class newCartRouter extends BaseRouter {
 
         this.delete("/:cid/products/:pid",['NO_AUTH'], cartsController.deleteProductFromCartById)
 
-        this.post("/:cid/purchase", ["NO_AUTH"], cartsController.purchaseCart);
+        this.post("/:cid/purchase", ["AUTH"], cartsController.purchaseCart);
     }
 }
 

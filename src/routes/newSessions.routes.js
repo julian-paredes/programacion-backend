@@ -23,7 +23,7 @@ class NewSessionsRouter extends BaseRouter {
             res.sendSuccess('Logged In')
         })
 
-        this.get('/current',['AUTH'], passportCall('jwt'), async(req,res) => {
+        this.get('/current',['AUTH'], async(req,res) => {
             res.sendSuccessWithPayload(req.user)
         })
 
