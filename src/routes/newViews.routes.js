@@ -12,6 +12,8 @@ class newViewsRouter extends BaseRouter {
         this.get('/register',['NO_AUTH'], viewsController.renderRegister)
 
         this.get('/login',['NO_AUTH'], viewsController.renderLogin)
+
+        this.get('/password-restore',['PUBLIC'], viewsController.renderPasswordRestore)
     }
 }
 

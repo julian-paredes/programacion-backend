@@ -1,5 +1,7 @@
+import config from "../config/config.js";
 import { getValidFilters } from "../services/getValidFilters.js";
 import { productsService } from "../services/index.js";
+import jwt from "jsonwebtoken";
 
 
 const renderHome = async (req, res) => {
@@ -73,9 +75,25 @@ const renderLogin = async (req,res) => {
     }
   }
 
+const renderPasswordRestore = async (req,res) => {
+      
+      try {
+        const {token} = req.query
+        if(!token) return res.render('restorePasswordError',{error: 'Ruta inválida'})
+        jwt.verify(token,config.jwt.JWT_SECRET)
+        res.render('restorePassword')
+      } catch (error) {
+        if(error.expiresAt){
+          return res.render('restorePasswordError',{error: 'El link del correo expiró. Favor de solicitar otro'})
+        }
+        res.render('restorePasswordError',{error: 'Token inválido o corrupto. Favor de generar otro'})
+      } 
+}
+
   export default {
     renderHome,
     renderProfile,
     renderRegister,
-    renderLogin
+    renderLogin,
+    renderPasswordRestore
   }
