@@ -11,6 +11,7 @@ import productsRouter from "./routes/newProduct.routes.js"
 import viewRouter from "./routes/newViews.routes.js"
 import cartsRouter from "./routes/newCart.routes.js"
 import sessionsRouter from "./routes/newSessions.routes.js"
+import usersRouter from "./routes/users.routes.js"
 import __dirname from "./utils.js"
 import initializeStrategies from "./config/passport.config.js";
 import config from "./config/config.js";
@@ -64,6 +65,7 @@ app.use('/', viewRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/api/sessions', sessionsRouter)
+app.use('/api/users', usersRouter)
 
 app.get('/loggerTest', (req,res) => {
     req.logger.error('ERROR')
