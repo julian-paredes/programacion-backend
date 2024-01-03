@@ -1,6 +1,6 @@
 import config from "../config/config.js";
 import { getValidFilters } from "../services/getValidFilters.js";
-import { productsService } from "../services/index.js";
+import { productsService, usersService } from "../services/index.js";
 import jwt from "jsonwebtoken";
 
 
@@ -75,6 +75,19 @@ const renderLogin = async (req,res) => {
     }
   }
 
+const renderUsers = async (req,res) => {
+  
+      try {
+        const users = await usersService.getUsers()
+        console.log(users);
+        res.render('users',{
+          users
+        })
+      } catch (error) {
+        res.json({ error: error });
+      }
+}
+
 const renderPasswordRestore = async (req,res) => {
       
       try {
@@ -95,5 +108,6 @@ const renderPasswordRestore = async (req,res) => {
     renderProfile,
     renderRegister,
     renderLogin,
+    renderUsers,
     renderPasswordRestore
   }
