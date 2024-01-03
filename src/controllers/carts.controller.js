@@ -1,4 +1,6 @@
+import DMailTemplates from "../constants/DMailTemplates.js";
 import { cartsService, productsService, ticketsService } from "../services/index.js";
+import MailerService from "../services/mailerService.js";
 
 const getCartById = async (req, res) => {
     try {
@@ -164,8 +166,9 @@ const purchaseCart = async (req,res) => {
       if (quantity <= stock) {
         let newStock = stock - quantity
 
-        // const stockModified = await productsService.updateProduct({_id: product._id},{stock: newStock})
-        // if (!stockModified) res.status(400).send({status: "error", message: error.message})
+        const stockModified = await productsService.updateProduct({_id: product._id},{stock: newStock})
+        if (!stockModified) res.status(400).send({status: "error", message: error.message})
+
         productosProcesados.push(item);
         console.log(`Producto ${product.code} procesado en compra`);
 
@@ -177,10 +180,14 @@ const purchaseCart = async (req,res) => {
     }
     const codeTicket = Date.now().toString(15);
 
+    console.log(req.user)
+
     const newTicket = {
       code: codeTicket,
       amount: sumTotal,
-      purchaser: "prueba@gmail.com"
+      purchaser: req.user.email,
+      purchaser_datetime: new Date().toISOString(),
+      products: productosProcesados,
     }
 
     console.log(newTicket);
@@ -189,6 +196,25 @@ const purchaseCart = async (req,res) => {
 
     if (ticketResult)
     res.status(200).send({status: "success", message: "Your order has been purchased!"})
+
+    const mailerService = new MailerService()
+    
+    const payload = {
+      name: req.user.name,
+      products: productsPurchased,
+    };
+
+    const result = await mailerService.sendMail(
+      [req.user.email],
+      DMailTemplates.PURCHASE,
+      {
+        name: req.user.name,
+        ticket: newTicket.code,
+        products: newTicket.products,
+        total: newTicket.amount,
+        date: newTicket.purchaser_datetime,
+      }
+    );
   } catch (error) {
     res.status(400).send({status: "error", message: error.message})
   }

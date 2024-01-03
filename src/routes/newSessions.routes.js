@@ -1,11 +1,5 @@
-import config from "../config/config.js";
 import passportCall from "../middlewares/passportCall.js";
 import BaseRouter from "./BaseRouter.js";
-import jwt from "jsonwebtoken";
-import { usersService } from "../services/index.js";
-import MailerService from "../services/mailerService.js";
-import DMailTemplates from "../constants/DMailTemplates.js";
-import auth from "../services/auth.js";
 import sessionsController from "../controllers/sessions.controller.js";
 
 class NewSessionsRouter extends BaseRouter {

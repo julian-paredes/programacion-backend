@@ -16,7 +16,8 @@ const login = async (req,res) => {
         name: `${req.user.firstName} ${req.user.lastName}`,
         id: req.user._id,
         role: req.user.role,
-        cart: req.user.cart
+        cart: req.user.cart,
+        email: req.user.email,
     }
     const token = jwt.sign(tokenizedUser,config.jwt.JWT_SECRET,{expiresIn:'2h'})
     res.cookie(config.jwt.JWT_COOKIE,token,{httpOnly: true})
