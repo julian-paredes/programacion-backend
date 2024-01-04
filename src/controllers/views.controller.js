@@ -88,6 +88,14 @@ const renderUsers = async (req,res) => {
       }
 }
 
+const renderCart = async (req,res) => {
+  try {
+    res.render('carts')
+  } catch (error) {
+    res.json({ error: error });
+  }
+}
+
 const renderPasswordRestore = async (req,res) => {
       
       try {
@@ -109,5 +117,6 @@ const renderPasswordRestore = async (req,res) => {
     renderRegister,
     renderLogin,
     renderUsers,
-    renderPasswordRestore
+    renderPasswordRestore,
+    renderCart
   }
