@@ -186,7 +186,7 @@ const purchaseCart = async (req,res) => {
       code: codeTicket,
       amount: sumTotal,
       purchaser: req.user.email,
-      purchaser_datetime: new Date().toISOString(),
+      purchaser_datetime: new Date().toLocaleDateString(),
       products: productosProcesados,
     }
 
@@ -194,27 +194,29 @@ const purchaseCart = async (req,res) => {
 
     const ticketResult = await ticketsService.createTicket(newTicket)
 
-    if (ticketResult)
-    res.status(200).send({status: "success", message: "Your order has been purchased!"})
+    if (ticketResult) {
+
+      const payload = {
+        name: req.user.name,
+        newTicket,
+      };
+  
+      res.status(200).send({status: "success", message: "Your order has been purchased!", payload: payload})
+
+    }
 
     const mailerService = new MailerService()
     
-    const payload = {
-      name: req.user.name,
-      products: productsPurchased,
-    };
-
     const result = await mailerService.sendMail(
       [req.user.email],
       DMailTemplates.PURCHASE,
       {
         name: req.user.name,
         ticket: newTicket.code,
-        products: newTicket.products,
-        total: newTicket.amount,
         date: newTicket.purchaser_datetime,
       }
     );
+
   } catch (error) {
     res.status(400).send({status: "error", message: error.message})
   }

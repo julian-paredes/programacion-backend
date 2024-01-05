@@ -17,6 +17,8 @@ class newViewsRouter extends BaseRouter {
 
         this.get('/cart',['AUTH'], viewsController.renderCart)
 
+        this.get("/purchase", ["AUTH"], viewsController.renderPurchase);
+
         this.get('/password-restore',['PUBLIC'], viewsController.renderPasswordRestore)
     }
 }
