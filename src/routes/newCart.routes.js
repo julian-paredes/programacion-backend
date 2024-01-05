@@ -17,7 +17,7 @@ class newCartRouter extends BaseRouter {
 
         this.put("/:cid/products/:pid",['NO_AUTH'], cartsController.updateCarttUnits)
 
-        this.delete("/:cid",['ADMIN'], cartsController.deleteAllProductsFromCartById)
+        this.delete("/:cid",['AUTH'], cartsController.deleteAllProductsFromCartById)
 
         this.delete("/:cid/products/:pid",['NO_AUTH'], cartsController.deleteProductFromCartById)
 
